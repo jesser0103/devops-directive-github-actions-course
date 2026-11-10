@@ -51,7 +51,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit 1 --add-label "documentation"
+          pr_number=$(gh pr list --limit 1 --json number --jq '.[0].number')
+          if [[ -z "$pr_number" ]]; then
+            echo "No pull requests found; skipping write-attempt demo."
+            exit 0
+          fi
+          gh pr edit "$pr_number" --add-label "documentation"
 
       - name: Confirm the failure
         if: failure()
@@ -68,7 +73,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit 1 --add-label "documentation"
+          pr_number=$(gh pr list --limit 1 --json number --jq '.[0].number')
+          if [[ -z "$pr_number" ]]; then
+            echo "No pull requests found; skipping write-attempt demo."
+            exit 0
+          fi
+          gh pr edit "$pr_number" --add-label "documentation"
       - name: Confirm the
         if: success()
         run: echo "✅ Write operation succeeded!"
